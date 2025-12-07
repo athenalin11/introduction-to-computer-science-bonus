@@ -1,0 +1,39 @@
+import sys
+
+soundex_map = {
+    'B': '1', 'P': '1', 'F': '1', 'V': '1',
+    'C': '2', 'S': '2', 'K': '2', 'G': '2', 'J': '2', 'Q': '2', 'X': '2', 'Z': '2',
+    'D': '3', 'T': '3',
+    'L': '4',
+    'M': '5', 'N': '5',
+    'R': '6',
+    'A': '0', 'E': '0', 'I': '0', 'O': '0', 'U': '0', 'Y': '0', 'W': '0', 'H': '0'
+}
+
+def soundex(name):
+    if not name:
+        return ""
+    first_letter = name[0]
+    code = [first_letter]
+    prev_code = soundex_map[first_letter]
+    
+    for ch in name[1:]:
+        curr_code = soundex_map[ch]
+        if curr_code != '0' and curr_code != prev_code:
+            code.append(curr_code)
+        prev_code = curr_code
+    
+    result = code[0] + ''.join(code[1:])
+    result = result.ljust(4, '0')  
+    return result[:4]  
+
+def main():
+    lines = [line.strip() for line in sys.stdin if line.strip()]
+    print(" " * 9 + "NAME" + " " * 21 + "SOUNDEX CODE")
+    for name in lines:
+        s_code = soundex(name.upper())
+        print(" " * 9 + name + " " * (25 - len(name)) + s_code)
+    print(" " * 19 + "END OF OUTPUT")
+
+if __name__ == "__main__":
+    main()
