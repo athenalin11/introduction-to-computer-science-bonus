@@ -1,0 +1,32 @@
+import sys
+
+def main():
+    data = sys.stdin.read().splitlines()
+    n = int(data[0])
+    out = []
+    for i in range(1, n + 1):
+        s = data[i]
+        # 直接處理，不替換空格
+        total = 0
+        count = 0
+        # 從字串右端開始
+        for j in range(len(s) - 1, -1, -1):
+            if s[j] == ' ':
+                continue
+            digit = ord(s[j]) - 48  # 直接轉數字
+            if count % 2 == 1:  # 從右數第二位開始
+                digit *= 2
+                if digit > 9:
+                    digit -= 9
+            total += digit
+            count += 1
+        
+        if total % 10 == 0:
+            out.append("Valid")
+        else:
+            out.append("Invalid")
+    
+    print("\n".join(out))
+
+if __name__ == "__main__":
+    main()
