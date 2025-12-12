@@ -1,0 +1,12 @@
+t = int(input().strip())
+
+for case in range(1, t + 1):
+    team_output = input().strip()
+    judge_output = input().strip()
+    
+    if team_output == judge_output:
+        print(f"Case {case}: Yes")
+    elif team_output.replace(" ", "") == judge_output:
+        print(f"Case {case}: Output Format Error")
+    else:
+        print(f"Case {case}: Wrong Answer")
