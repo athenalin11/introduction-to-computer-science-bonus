@@ -1,0 +1,20 @@
+import sys
+
+# 建立字典
+hello_dict = {
+    "HELLO": "ENGLISH",
+    "HOLA": "SPANISH",
+    "HALLO": "GERMAN",
+    "BONJOUR": "FRENCH",
+    "CIAO": "ITALIAN",
+    "ZDRAVSTVUJTE": "RUSSIAN"
+}
+
+case_num = 1
+for line in sys.stdin:
+    s = line.strip()
+    if s == "#":
+        break
+    language = hello_dict.get(s, "UNKNOWN")
+    print(f"Case {case_num}: {language}")
+    case_num += 1
