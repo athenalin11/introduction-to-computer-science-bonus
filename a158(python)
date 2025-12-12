@@ -1,0 +1,32 @@
+import math
+import sys
+
+def main():
+    input_lines = sys.stdin.read().strip().splitlines()
+    
+    # 過濾空行
+    non_empty_lines = [line.strip() for line in input_lines if line.strip()]
+    
+    if not non_empty_lines:
+        return
+    
+    t = int(non_empty_lines[0])
+    index = 1
+    
+    for _ in range(t):
+        if index >= len(non_empty_lines):
+            break
+        arr = list(map(int, non_empty_lines[index].split()))
+        index += 1
+        
+        max_gcd = 0
+        n = len(arr)
+        for a in range(n):
+            for b in range(a + 1, n):
+                g = math.gcd(arr[a], arr[b])
+                if g > max_gcd:
+                    max_gcd = g
+        print(max_gcd)
+
+if __name__ == "__main__":
+    main()
