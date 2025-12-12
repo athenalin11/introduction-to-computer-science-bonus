@@ -1,0 +1,9 @@
+import sys
+
+for line in sys.stdin:
+    n = int(line.strip())
+    if n == 0:
+        break
+    binary_str = bin(n)[2:]  # 轉成二進位，去掉 '0b'
+    parity = binary_str.count('1')
+    print(f"The parity of {binary_str} is {parity} (mod 2).")
