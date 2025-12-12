@@ -1,0 +1,30 @@
+import sys
+
+fib = [1, 2]
+while fib[-1] <= 100000000:
+    fib.append(fib[-1] + fib[-2])
+
+def to_fib_base(n):
+    # 從大到小
+    fib_sequence = []
+    for f in reversed(fib):
+        if n >= f:
+            fib_sequence.append('1')
+            n -= f
+        else:
+    result = ''.join(fib_sequence).lstrip('0')
+    return result if result else '0'
+
+def main():
+    data = sys.stdin.read().strip().split()
+    if not data:
+        return
+    n = int(data[0])
+    idx = 1
+    for i in range(n):
+        num = int(data[idx]); idx += 1
+        fib_repr = to_fib_base(num)
+        print(f"{num} = {fib_repr} (fib)")
+
+if __name__ == "__main__":
+    main()
