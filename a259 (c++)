@@ -1,0 +1,110 @@
+#include <cstdio>
+#include <vector>
+#include <queue>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+
+const int MAXN = 1005;
+const int INF = 0x3f3f3f3f;
+
+struct Edge {
+    int to, dist;
+    Edge(int t, int d) : to(t), dist(d) {}
+};
+
+vector<Edge> graph[MAXN];
+int dist[MAXN];  // 從家(點2)到各點的最短距離
+int dp[MAXN];    // 從各點到家的路徑數
+bool visited[MAXN];
+int N, M;
+
+// Dijkstra 算法計算從start到所有點的最短距離
+void dijkstra(int start) {
+    for (int i = 1; i <= N; i++) {
+        dist[i] = INF;
+        visited[i] = false;
+    }
+    
+    priority_queue<pair<int, int>, vector<pair<int, int> >, greater<pair<int, int> > > pq;
+    dist[start] = 0;
+    pq.push(make_pair(0, start));
+    
+    while (!pq.empty()) {
+        int d = pq.top().first;
+        int u = pq.top().second;
+        pq.pop();
+        
+        if (visited[u]) continue;
+        visited[u] = true;
+        
+        for (int i = 0; i < graph[u].size(); i++) {
+            int v = graph[u][i].to;
+            int w = graph[u][i].dist;
+            
+            if (dist[u] + w < dist[v]) {
+                dist[v] = dist[u] + w;
+                pq.push(make_pair(dist[v], v));
+            }
+        }
+    }
+}
+
+// DFS + 記憶化搜尋計算從點u到家(點2)的路徑數
+int count_paths(int u) {
+    // 到達家了
+    if (u == 2) {
+        return 1;
+    }
+    
+    // 已經計算過
+    if (dp[u] != -1) {
+        return dp[u];
+    }
+    
+    dp[u] = 0;
+    
+    // 枚舉所有相鄰的點
+    for (int i = 0; i < graph[u].size(); i++) {
+        int v = graph[u][i].to;
+        
+        // 只走"前進"的邊：v到家的距離 < u到家的距離
+        if (dist[v] < dist[u]) {
+            dp[u] += count_paths(v);
+        }
+    }
+    
+    return dp[u];
+}
+
+int main() {
+    while (scanf("%d", &N) && N != 0) {
+        scanf("%d", &M);
+        
+        // 清空圖
+        for (int i = 1; i <= N; i++) {
+            graph[i].clear();
+        }
+        
+        // 讀取邊
+        for (int i = 0; i < M; i++) {
+            int a, b, d;
+            scanf("%d %d %d", &a, &b, &d);
+            graph[a].push_back(Edge(b, d));
+            graph[b].push_back(Edge(a, d));
+        }
+        
+        // 從家(點2)開始做 Dijkstra
+        dijkstra(2);
+        
+        // 初始化 dp
+        memset(dp, -1, sizeof(dp));
+        
+        // 計算從辦公室(點1)到家(點2)的路徑數
+        int result = count_paths(1);
+        
+        printf("%d\n", result);
+    }
+    
+    return 0;
+}
