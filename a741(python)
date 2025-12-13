@@ -1,0 +1,45 @@
+import sys
+
+def convert(n):
+    if n == 0:
+        return []
+    
+    result = []
+    
+    if n >= 10000000:
+        result.extend(convert(n // 10000000))
+        result.append("kuti")
+        n %= 10000000
+    
+    if n >= 100000:
+        result.append(str(n // 100000))
+        result.append("lakh")
+        n %= 100000
+    
+    if n >= 1000:
+        result.append(str(n // 1000))
+        result.append("hajar")
+        n %= 1000
+    
+    if n >= 100:
+        result.append(str(n // 100))
+        result.append("shata")
+        n %= 100
+    
+    if n > 0:
+        result.append(str(n))
+    
+    return result
+
+def main():
+    case_num = 1
+    for line in sys.stdin:
+        num = int(line.strip())
+        parts = convert(num)
+        if not parts:  # 如果數字是 0
+            parts = ["0"]
+        print(f"{case_num:4d}. " + " ".join(parts))
+        case_num += 1
+
+if __name__ == "__main__":
+    main()
