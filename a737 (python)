@@ -1,0 +1,25 @@
+def main():
+    import sys
+    input = sys.stdin.readline
+    
+    t = int(input().strip())
+    results = []
+    
+    for _ in range(t):
+        parts = list(map(int, input().split()))
+        r = parts[0]
+        houses = parts[1:]
+        
+        houses.sort()
+        median = houses[r // 2]
+        
+        total = 0
+        for h in houses:
+            total += abs(h - median)
+        
+        results.append(str(total))
+    
+    print("\n".join(results))
+
+if __name__ == "__main__":
+    main()
