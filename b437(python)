@@ -1,0 +1,112 @@
+import sys
+import math
+import random
+
+def is_prime(n):
+    """Miller-Rabin 质数测试"""
+    if n < 2:
+        return False
+    small_primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
+    if n in small_primes:
+        return True
+    for p in small_primes:
+        if n % p == 0:
+            return False
+
+    # 写 n-1 = d*2^s
+    d = n - 1
+    s = 0
+    while d % 2 == 0:
+        d //= 2
+        s += 1
+
+    def check(a):
+        x = pow(a, d, n)
+        if x == 1 or x == n - 1:
+            return True
+        for _ in range(s - 1):
+            x = pow(x, 2, n)
+            if x == n - 1:
+                return True
+        return False
+
+    # 测试 8 次
+    for _ in range(8):
+        a = random.randrange(2, n - 1)
+        if not check(a):
+            return False
+    return True
+
+def pollard_rho(n):
+    """Pollard's Rho 算法分解合数"""
+    if n % 2 == 0:
+        return 2
+    x = random.randrange(2, n - 1)
+    y = x
+    c = random.randrange(1, n - 1)
+    d = 1
+    f = lambda x: (x * x + c) % n
+    while d == 1:
+        x = f(x)
+        y = f(f(y))
+        d = math.gcd(abs(x - y), n)
+        if d == n:
+            return pollard_rho(n)
+    return d
+
+def factorize(n):
+    """返回 n 的质因数分解列表"""
+    factors = []
+    # 试除法去除小因子
+    for p in [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]:
+        while n % p == 0:
+            factors.append(p)
+            n //= p
+    # 进一步试除
+    p = 37
+    while p * p <= n and p <= 10**6:
+        while n % p == 0:
+            factors.append(p)
+            n //= p
+        p += 2
+        while p * p <= n and p <= 10**6:
+            while n % p == 0:
+                factors.append(p)
+                n //= p
+            p += 4  # 跳过一些偶数
+    # 如果 n 还大于 1
+    if n > 1:
+        if is_prime(n):
+            factors.append(n)
+        else:
+            # 用 Pollard's Rho 分解
+            d = pollard_rho(n)
+            factors.extend(factorize(d))
+            factors.extend(factorize(n // d))
+    return factors
+
+def main():
+    input_data = sys.stdin.read().strip().split()
+    T = int(input_data[0])
+    idx = 1
+    for _ in range(T):
+        N = int(input_data[idx]); idx += 1
+        factors = factorize(N)
+        factors.sort()
+        # 整理成 p^e 形式
+        from collections import Counter
+        cnt = Counter(factors)
+        unique_factors = sorted(cnt.keys())
+        # 输出
+        print(f"{N} = ", end="")
+        parts = []
+        for p in unique_factors:
+            e = cnt[p]
+            if e == 1:
+                parts.append(str(p))
+            else:
+                parts.append(f"{p}^{e}")
+        print(" * ".join(parts))
+
+if __name__ == "__main__":
+    main()
