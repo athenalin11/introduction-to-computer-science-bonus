@@ -1,0 +1,57 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    long long n, k;
+    
+    while (scanf("%lld %lld", &n, &k) == 2) {
+        long long result = 0;
+        
+        // 當 i > k 時，k mod i = k
+        // 所以從 k+1 到 n，每個都貢獻 k
+        if (n > k) {
+            result += (n - k) * k;
+        }
+        
+        // 對於 i <= k，需要計算 k mod i
+        long long limit = min(n, k);
+        
+        // 優化：對於相同的 k/i 商，k mod i 會有規律
+        // k mod i = k - (k/i) * i
+        // 當 i 從某個範圍變化時，k/i 保持不變
+        
+        for (long long i = 1; i <= limit; ) {
+            long long q = k / i;  // 商
+            long long next_i;
+            
+            if (q == 0) {
+                // k < i，所以 k mod i = k
+                result += k * (limit - i + 1);
+                break;
+            }
+            
+            // 找到使得 k/j = q 的最大 j
+            next_i = k / q + 1;
+            if (next_i > limit + 1) {
+                next_i = limit + 1;
+            }
+            
+            // 對於 i 到 next_i-1，k/i = q
+            // k mod i = k - q*i
+            // sum = Σ(k - q*i) for i in [i, next_i-1]
+            // = (next_i - i) * k - q * Σi
+            // = (next_i - i) * k - q * (i + next_i-1) * (next_i - i) / 2
+            
+            long long count = next_i - i;
+            long long sum_i = (i + next_i - 1) * count / 2;
+            result += count * k - q * sum_i;
+            
+            i = next_i;
+        }
+        
+        printf("%lld\n", result);
+    }
+    
+    return 0;
+}
