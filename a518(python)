@@ -1,0 +1,9 @@
+import sys
+
+for line in sys.stdin:
+    a, b = map(int, line.split())
+    if a == -1 and b == -1:
+        break
+    up = (b - a) % 100
+    down = (a - b) % 100
+    print(min(up, down))
