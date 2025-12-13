@@ -1,0 +1,124 @@
+#include <cstdio>
+#include <algorithm>
+#include <vector>
+#include <cstring>
+#include <set>
+using namespace std;
+
+int N;
+vector<int> sums;
+int result[15];
+multiset<int> remaining;
+
+bool backtrack(int idx) {
+    if (idx == N) {
+        return remaining.empty();
+    }
+    
+    // 找出最小的未使用的和
+    if (remaining.empty()) return false;
+    
+    int min_sum = *remaining.begin();
+    
+    // 這個和應該是 result[0] + result[idx]
+    int candidate = min_sum - result[0];
+    
+    // 確保有序
+    if (idx > 0 && candidate < result[idx-1]) {
+        return false;
+    }
+    
+    // 檢查這個候選數能否與前面所有數配對
+    vector<int> to_remove;
+    for (int i = 0; i < idx; i++) {
+        int need = result[i] + candidate;
+        if (remaining.find(need) == remaining.end()) {
+            return false;  // 找不到需要的和
+        }
+        to_remove.push_back(need);
+    }
+    
+    // 移除這些和
+    for (size_t i = 0; i < to_remove.size(); i++) {
+        remaining.erase(remaining.find(to_remove[i]));
+    }
+    
+    result[idx] = candidate;
+    
+    if (backtrack(idx + 1)) {
+        return true;
+    }
+    
+    // 恢復
+    for (size_t i = 0; i < to_remove.size(); i++) {
+        remaining.insert(to_remove[i]);
+    }
+    
+    return false;
+}
+
+int main() {
+    while (scanf("%d", &N) == 1) {
+        sums.clear();
+        
+        int total = N * (N - 1) / 2;
+        sums.resize(total);
+        
+        for (int i = 0; i < total; i++) {
+            if (scanf("%d", &sums[i]) != 1) {
+                printf("Impossible\n");
+                continue;
+            }
+        }
+        
+        sort(sums.begin(), sums.end());
+        
+        bool found = false;
+        
+        // 枚舉第三個和可能在哪裡 (a[1]+a[2])
+        for (int k = 1; k < total && !found; k++) {
+            for (int j = k+1; j < total && !found; j++) {
+                // 假設 sums[0] = a[0]+a[1], sums[k] = a[0]+a[2], sums[j] = a[1]+a[2]
+                
+                if ((sums[0] + sums[k] + sums[j]) % 2 != 0) continue;
+                
+                int sum3 = (sums[0] + sums[k] + sums[j]) / 2;
+                result[0] = sum3 - sums[j];
+                result[1] = sums[0] - result[0];
+                result[2] = sums[k] - result[0];
+                
+                // 檢查是否有序且三個和都正確
+                if (result[0] > result[1] || result[1] > result[2]) continue;
+                if (result[1] + result[2] != sums[j]) continue;
+                
+                // 建立剩餘的和的集合
+                remaining.clear();
+                for (int i = 0; i < total; i++) {
+                    remaining.insert(sums[i]);
+                }
+                
+                // 移除前三個和
+                remaining.erase(remaining.find(sums[0]));
+                remaining.erase(remaining.find(sums[k]));
+                remaining.erase(remaining.find(sums[j]));
+                
+                if (backtrack(3)) {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        
+        if (found) {
+            for (int i = 0; i < N; i++) {
+                if (i > 0) printf(" ");
+                printf("%d", result[i]);
+            }
+            printf("\n");
+        } else {
+            printf("Impossible\n");
+        }
+    }
+    
+    return 0;
+}
