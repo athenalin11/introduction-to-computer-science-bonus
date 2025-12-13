@@ -1,0 +1,36 @@
+def solve():
+    import sys
+    input = sys.stdin.read
+    data = input().split()
+    t = int(data[0])
+    idx = 1
+    for case_num in range(1, t + 1):
+        p = int(data[idx]); idx += 1
+        q = int(data[idx]); idx += 1
+        divisor = 1 << q   # 2^q
+        
+        # 找出所有 p 位數（1 和 2 組成）且能被 divisor 整除的數字
+        solutions = []
+        stack = [(1, 1 % divisor, 1), (2, 2 % divisor, 1)]
+        while stack:
+            num, rem, length = stack.pop()
+            if length == p:
+                if rem == 0:
+                    solutions.append(num)
+                continue
+            for digit in (1, 2):
+                new_num = num * 10 + digit
+                new_rem = (rem * 10 + digit) % divisor
+                stack.append((new_num, new_rem, length + 1))
+        
+        solutions.sort()
+        print(f"Case {case_num}: ", end="")
+        if not solutions:
+            print("impossible")
+        elif len(solutions) == 1:
+            print(solutions[0])
+        else:
+            print(solutions[0], solutions[-1])
+
+if __name__ == "__main__":
+    solve()
