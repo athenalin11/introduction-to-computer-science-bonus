@@ -1,0 +1,27 @@
+def can_make_target(n, lengths):
+    if n == 0:
+        return True
+    total = sum(lengths)
+    if n > total:
+        return False
+    dp = [False] * (n + 1)
+    dp[0] = True
+    for length in lengths:
+        for j in range(n, length - 1, -1):
+            if dp[j - length]:
+                dp[j] = True
+    return dp[n]
+
+def main():
+    t = int(input().strip())
+    for _ in range(t):
+        n = int(input().strip())
+        p = int(input().strip())
+        lengths = list(map(int, input().strip().split()))
+        if can_make_target(n, lengths):
+            print("YES")
+        else:
+            print("NO")
+
+if __name__ == "__main__":
+    main()
