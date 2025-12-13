@@ -1,0 +1,50 @@
+import sys
+
+def count_safe(n):
+    """
+    計算長度為 n 的安全排列數（不包含連續 3 個 U）
+    dp[i][j] = 長度為 i，結尾連續有 j 個 U 的安全排列數
+    j = 0: 結尾是 L
+    j = 1: 結尾是一個 U
+    j = 2: 結尾是兩個 U
+    """
+    if n == 0:
+        return 1
+    
+    # dp[結尾連續 U 的個數]
+    dp = [0, 0, 0]  # dp[0], dp[1], dp[2]
+    
+    # 初始化：長度為 1
+    dp[0] = 1  # L
+    dp[1] = 1  # U
+    
+    # 從第 2 個桶子開始
+    for i in range(2, n + 1):
+        new_dp = [0, 0, 0]
+        
+        # 如果這個位置放 L，結尾就是 0 個連續 U
+        new_dp[0] = dp[0] + dp[1] + dp[2]
+        
+        # 如果這個位置放 U
+        new_dp[1] = dp[0]  # 前面結尾是 L，現在是 1 個 U
+        new_dp[2] = dp[1]  # 前面結尾是 1 個 U，現在是 2 個 U
+        
+        dp = new_dp
+    
+    return dp[0] + dp[1] + dp[2]
+
+def solve(n):
+    """計算會導致悲劇的排列數"""
+    total = 2 ** n  # 總共 2^n 種排列
+    safe = count_safe(n)  
+    return total - safe  
+
+def main():
+    for line in sys.stdin:
+        n = int(line.strip())
+        if n == 0:
+            break
+        print(solve(n))
+
+if __name__ == "__main__":
+    main()
