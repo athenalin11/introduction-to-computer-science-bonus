@@ -1,0 +1,77 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+
+const int MAXN = 1000005;
+int primitive[MAXN];
+int used_count[MAXN];
+
+int gcd(int a, int b) {
+    return b == 0 ? a : gcd(b, a % b);
+}
+
+void precompute() {
+    memset(primitive, 0, sizeof(primitive));
+    
+    // 記錄每個數字在哪個最小的 N 會被使用
+    static int min_N[MAXN];
+    memset(min_N, 0x3f, sizeof(min_N));
+    
+    // 生成所有互質三元組
+    for (int m = 2; m * m < MAXN; m++) {
+        for (int n = 1; n < m; n++) {
+            if (gcd(m, n) != 1) continue;
+            if ((m % 2 == 1) && (n % 2 == 1)) continue;
+            
+            int x = m * m - n * n;
+            int y = 2 * m * n;
+            int z = m * m + n * n;
+            
+            if (x > y) swap(x, y);
+            if (z >= MAXN) break;
+            
+            primitive[z]++;
+            
+            // 標記這個三元組的所有倍數
+            for (int k = 1; k * z < MAXN; k++) {
+                int kx = k * x, ky = k * y, kz = k * z;
+                min_N[kx] = min(min_N[kx], kz);
+                min_N[ky] = min(min_N[ky], kz);
+                min_N[kz] = min(min_N[kz], kz);
+            }
+        }
+    }
+    
+    // 計算前綴和 - primitive[i] = N <= i 時有多少個互質三元組
+    for (int i = 1; i < MAXN; i++) {
+        primitive[i] += primitive[i - 1];
+    }
+    
+    // 計算 used_count[N] = 從 1 到 N 有多少個被使用的數字
+    // 策略：對每個數字 i，它在 N >= min_N[i] 時開始被使用
+    // 所以在 used_count[min_N[i]] 處標記+1，然後做前綴和
+    memset(used_count, 0, sizeof(used_count));
+    for (int i = 1; i < MAXN; i++) {
+        if (min_N[i] < MAXN) {
+            used_count[min_N[i]]++;
+        }
+    }
+    
+    // 前綴和：used_count[N] = 從 1 到 N 有多少個數字被使用
+    for (int i = 1; i < MAXN; i++) {
+        used_count[i] += used_count[i - 1];
+    }
+}
+
+int main() {
+    precompute();
+    
+    int N;
+    while (scanf("%d", &N) == 1) {
+        int unused = N - used_count[N];
+        printf("%d %d\n", primitive[N], unused);
+    }
+    
+    return 0;
+}
