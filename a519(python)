@@ -1,0 +1,16 @@
+def main():
+    # 預先計算到 fib(81)
+    fib = [0] * 82
+    fib[0] = 0
+    fib[1] = 1
+    for i in range(2, 82):
+        fib[i] = fib[i-1] + fib[i-2]
+    
+    while True:
+        n = int(input().strip())
+        if n == 0:
+            break
+        print(fib[n+1])
+
+if __name__ == "__main__":
+    main()
