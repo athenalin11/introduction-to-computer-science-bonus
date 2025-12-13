@@ -1,0 +1,53 @@
+def generate_permutations(chars):
+    """
+    按照 Knuth 的插入方法生成排列
+    
+    規則：
+    - 從第一個字元開始
+    - 依序將每個字元插入到現有排列的所有可能位置
+    - 對每個排列，插入位置從右到左（右邊優先）
+    """
+    if not chars:
+        return []
+    
+    # 從第一個字元開始
+    permutations = [chars[0]]
+    
+    # 依序插入其他字元
+    for i in range(1, len(chars)):
+        new_char = chars[i]
+        new_permutations = []
+        
+        # 對每個現有的排列
+        for perm in permutations:
+            # 將新字元插入到所有可能的位置（從左到右，但先輸出右邊的）
+            # 位置：len(perm), len(perm)-1, ..., 1, 0
+            for pos in range(len(perm) + 1):
+                new_perm = perm[:pos] + new_char + perm[pos:]
+                new_permutations.append(new_perm)
+        
+        permutations = new_permutations
+    
+    return permutations
+
+def solve():
+    import sys
+    lines = []
+    for line in sys.stdin:
+        lines.append(line.strip())
+    
+    first = True
+    for line in lines:
+        if line:
+            if not first:
+                print()  # 測試資料間空一列
+            first = False
+            
+            chars = line.strip()
+            permutations = generate_permutations(chars)
+            
+            for perm in permutations:
+                print(perm)
+
+if __name__ == "__main__":
+    solve()
