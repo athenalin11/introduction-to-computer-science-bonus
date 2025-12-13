@@ -1,0 +1,52 @@
+def base1_to_decimal(blocks):
+
+    if not blocks:
+        return 0
+    
+    binary_str = ""
+    flag = 1  # 初始 flag 值（會被第一個區塊設定）
+    
+    for block in blocks:
+        count = len(block)  # 計算區塊中 0 的數量
+        
+        if count == 1:
+            # 1個0：把 flag 設為 1
+            flag = 1
+        elif count == 2:
+            # 2個0：把 flag 設為 0
+            flag = 0
+        else:
+            # n個0 (n > 2)：附加 n-2 個 flag 位到二進位字串
+            binary_str += str(flag) * (count - 2)
+    
+    # 將二進位字串轉換成十進位
+    if binary_str == "":
+        return 0
+    
+    return int(binary_str, 2)
+
+def solve():
+    while True:
+        # 讀取輸入直到遇到 # 或 ~
+        tokens = []
+        while True:
+            line = input().strip()
+            if '~' in line:
+                return  # 結束程式
+            
+            parts = line.split()
+            for part in parts:
+                if part == '#':
+                    # 處理這筆測資
+                    result = base1_to_decimal(tokens)
+                    print(result)
+                    tokens = []
+                    break
+                else:
+                    tokens.append(part)
+            
+            if '#' in line:
+                break
+
+if __name__ == "__main__":
+    solve()
