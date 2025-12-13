@@ -1,0 +1,68 @@
+#include <cstdio>
+using namespace std;
+
+// 2x2 矩陣
+struct Matrix {
+    long long a[2][2];
+    int mod;
+    
+    Matrix(int m) : mod(1 << m) {
+        a[0][0] = a[0][1] = a[1][0] = a[1][1] = 0;
+    }
+    
+    Matrix operator*(const Matrix& other) const {
+        Matrix result(0);
+        result.mod = mod;
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 2; k++) {
+                    result.a[i][j] = (result.a[i][j] + a[i][k] * other.a[k][j]) % mod;
+                }
+            }
+        }
+        return result;
+    }
+};
+
+// 矩陣快速冪
+Matrix matrix_pow(Matrix base, long long n) {
+    int mod_val = base.mod;
+    Matrix result(0);
+    result.mod = mod_val;
+    // 單位矩陣
+    result.a[0][0] = result.a[1][1] = 1;
+    
+    while (n > 0) {
+        if (n & 1) {
+            result = result * base;
+        }
+        base = base * base;
+        n >>= 1;
+    }
+    
+    return result;
+}
+
+long long fibonacci_mod(long long n, int m) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    
+    Matrix base(m);
+    base.a[0][0] = base.a[0][1] = base.a[1][0] = 1;
+    base.a[1][1] = 0;
+    
+    Matrix result = matrix_pow(base, n);
+    
+    return result.a[1][0];
+}
+
+int main() {
+    long long n;
+    int m;
+    
+    while (scanf("%lld %d", &n, &m) == 2) {
+        printf("%lld\n", fibonacci_mod(n, m));
+    }
+    
+    return 0;
+}
