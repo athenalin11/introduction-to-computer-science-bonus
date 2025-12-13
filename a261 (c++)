@@ -1,0 +1,73 @@
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+// 預計算：dp[trials][balls] = 用 balls 個球丟 trials 次能測的最大樓層數
+long long dp[64][65];
+
+void precompute() {
+    // 初始化
+    for (int t = 0; t < 64; t++) {
+        for (int b = 0; b <= 64; b++) {
+            dp[t][b] = 0;
+        }
+    }
+    
+    // 計算 dp 表
+    for (int trials = 1; trials <= 63; trials++) {
+        for (int balls = 1; balls <= 64; balls++) {
+            if (balls == 1) {
+                dp[trials][balls] = trials;
+            } else {
+                long long total = dp[trials-1][balls-1] + dp[trials-1][balls] + 1;
+                // 避免溢出
+                if (total > 9223372036854775807LL) {
+                    dp[trials][balls] = 9223372036854775807LL;
+                } else {
+                    dp[trials][balls] = total;
+                }
+            }
+        }
+    }
+}
+
+int solve(int k, long long n) {
+    if (k == 1) {
+        return min(n, 64LL);
+    }
+    
+    if (n <= 1) {
+        return n;
+    }
+    
+    k = min(k, 64);
+    
+    for (int trials = 1; trials <= 63; trials++) {
+        if (dp[trials][k] >= n) {
+            return trials;
+        }
+    }
+    
+    return 64;
+}
+
+int main() {
+    precompute();
+    
+    int k;
+    long long n;
+    
+    while (scanf("%d %lld", &k, &n) == 2) {
+        if (k == 0) break;
+        
+        int result = solve(k, n);
+        
+        if (result > 63) {
+            printf("More than 63 trials needed.\n");
+        } else {
+            printf("%d\n", result);
+        }
+    }
+    
+    return 0;
+}
