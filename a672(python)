@@ -1,0 +1,29 @@
+def count_squares(k, x, y, cx=1024, cy=1024):
+    if k == 0:
+        return 0
+    # 檢查點是否在當前正方形內
+    if abs(x - cx) <= k and abs(y - cy) <= k:
+        total = 1
+    else:
+        total = 0
+    
+    if k > 1:
+        half_k = k // 2
+        # 四個角的正方形中心
+        total += count_squares(half_k, x, y, cx - k, cy - k)  # 左上
+        total += count_squares(half_k, x, y, cx + k, cy - k)  # 右上
+        total += count_squares(half_k, x, y, cx - k, cy + k)  # 左下
+        total += count_squares(half_k, x, y, cx + k, cy + k)  # 右下
+    return total
+
+def main():
+    import sys
+    for line in sys.stdin:
+        k, x, y = map(int, line.split())
+        if k == 0 and x == 0 and y == 0:
+            break
+        result = count_squares(k, x, y)
+        print(f"{result:3d}")
+
+if __name__ == "__main__":
+    main()
