@@ -1,0 +1,39 @@
+def max_winning_streak(numbers):
+    """
+    使用 Kadane's Algorithm 找出最大連續子數組和
+    """
+    if not numbers:
+        return None
+    
+    max_sum = float('-inf')
+    current_sum = 0
+    
+    for num in numbers:
+        # 決定是繼續累加還是重新開始
+        current_sum = max(num, current_sum + num)
+        # 更新最大值
+        max_sum = max(max_sum, current_sum)
+    
+    return max_sum
+
+def solve():
+    while True:
+        n = int(input())
+        
+        if n == 0:
+            break
+        
+        # 讀取數列
+        numbers = list(map(int, input().split()))
+        
+        # 計算最大連續贏錢金額
+        max_win = max_winning_streak(numbers)
+        
+        # 輸出結果
+        if max_win <= 0:
+            print("Losing streak.")
+        else:
+            print(f"The maximum winning streak is {max_win}.")
+
+if __name__ == "__main__":
+    solve()
