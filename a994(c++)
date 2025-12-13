@@ -1,0 +1,78 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+using namespace std;
+
+inline long long gcd(long long a, long long b) {
+    while (b) {
+        long long t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+long long N;
+long long filtered[15];
+int cnt;
+long long result;
+
+void dfs(int pos, long long lcm, int bits) {
+    if (pos == cnt) {
+        if (bits > 0 && lcm <= N) {
+            if (bits & 1) {
+                result -= N / lcm;
+            } else {
+                result += N / lcm;
+            }
+        }
+        return;
+    }
+    
+    // 不選第 pos 個數
+    dfs(pos + 1, lcm, bits);
+    
+    // 選第 pos 個數
+    long long g = gcd(lcm, filtered[pos]);
+    
+    // 檢查是否會溢出
+    if (lcm / g <= N / filtered[pos]) {
+        long long new_lcm = lcm / g * filtered[pos];
+        dfs(pos + 1, new_lcm, bits + 1);
+    }
+}
+
+int main() {
+    int M;
+    
+    while (scanf("%lld %d", &N, &M) == 2) {
+        long long nums[15];
+        for (int i = 0; i < M; i++) {
+            scanf("%lld", &nums[i]);
+        }
+        
+        // 去除重複並排序
+        sort(nums, nums + M);
+        M = unique(nums, nums + M) - nums;
+        
+        // 移除被其他數整除的數
+        cnt = 0;
+        for (int i = 0; i < M; i++) {
+            bool ok = true;
+            for (int j = 0; j < cnt; j++) {
+                if (nums[i] % filtered[j] == 0) {
+                    ok = false;
+                    break;
+                }
+            }
+            if (ok) filtered[cnt++] = nums[i];
+        }
+        
+        result = N;
+        dfs(0, 1, 0);
+        
+        printf("%lld\n", result);
+    }
+    
+    return 0;
+}
