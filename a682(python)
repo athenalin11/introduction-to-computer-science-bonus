@@ -1,0 +1,75 @@
+import sys
+
+
+def ways_by_color(n, parity):
+    # group squares by "\"-diagonal index = r - c + (n-1)  (range 0..2n-2)
+    diagonals = [[] for _ in range(2*n-1)]
+    for r in range(n):
+        for c in range(n):
+            if (r + c) % 2 != parity:
+                continue
+            d_idx = r - c + (n - 1)
+            sum_idx = r + c
+            diagonals[d_idx].append(sum_idx)
+
+    # only keep diagonals that have squares (shrink)
+    diag_list = [d for d in diagonals if d]
+
+    max_positions = len([1 for r in range(n) for c in range(n) if (r+c)%2==parity])
+    # ways[t] = number of ways to place t bishops on this color
+    ways = [0] * (max_positions + 1)
+
+    # backtrack
+    def dfs(idx, mask, count):
+        if idx == len(diag_list):
+            ways[count] += 1
+            return
+        # option 1: skip this diagonal
+        dfs(idx + 1, mask, count)
+        # option 2: try place 1 bishop on any square of this diagonal (if its /-diag free)
+        for sum_idx in diag_list[idx]:
+            bit = 1 << sum_idx
+            if not (mask & bit):
+                dfs(idx + 1, mask | bit, count + 1)
+
+    dfs(0, 0, 0)
+    return ways
+
+def solve_all(lines):
+    out_lines = []
+    for line in lines:
+        if not line: 
+            continue
+        parts = line.split()
+        if len(parts) < 2:
+            continue
+        n = int(parts[0]); k = int(parts[1])
+        if n == 0 and k == 0:
+            break
+
+        # max bishops possible = number of squares
+        total_squares = n * n
+        if k > total_squares:
+            out_lines.append("0")
+            continue
+
+        # compute ways for parity 0 and 1
+        ways0 = ways_by_color(n, 0)  # parity 0
+        ways1 = ways_by_color(n, 1)  # parity 1
+
+        # convolution: choose i from color0 and k-i from color1
+        ans = 0
+        for i in range(len(ways0)):
+            j = k - i
+            if 0 <= j < len(ways1):
+                ans += ways0[i] * ways1[j]
+        out_lines.append(str(ans))
+    return out_lines
+
+def main():
+    data = sys.stdin.read().strip().splitlines()
+    res = solve_all(data)
+    sys.stdout.write("\n".join(res))
+
+if __name__ == "__main__":
+    main()
