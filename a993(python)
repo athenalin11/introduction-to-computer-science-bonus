@@ -1,0 +1,10 @@
+import sys
+
+for line in sys.stdin:
+    n = int(line.strip())
+    remainder = 1
+    k = 1
+    while remainder % n != 0:
+        remainder = (remainder * 10 + 1) % n
+        k += 1
+    print(k)
