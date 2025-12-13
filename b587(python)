@@ -1,0 +1,18 @@
+import sys
+
+# 預先計算 dp[0..30]
+dp = [0] * 31
+dp[0] = 1
+dp[2] = 3
+for n in range(4, 31, 2):
+    dp[n] = 4 * dp[n-2] - dp[n-4]
+
+def main():
+    for line in sys.stdin:
+        n = int(line.strip())
+        if n == -1:
+            break
+        print(dp[n] if n % 2 == 0 else 0)
+
+if __name__ == "__main__":
+    main()
