@@ -1,0 +1,18 @@
+import sys
+
+def main():
+    input = sys.stdin.read().splitlines()
+    n = int(input[0])
+    
+    count_dict = {}
+    
+    for i in range(1, n + 1):
+        line = input[i].split()
+        country = line[0]
+        count_dict[country] = count_dict.get(country, 0) + 1
+    
+    for country in sorted(count_dict.keys()):
+        print(f"{country} {count_dict[country]}")
+
+if __name__ == "__main__":
+    main()
