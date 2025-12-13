@@ -1,0 +1,27 @@
+import sys
+
+def main():
+    case_num = 1
+    lines = sys.stdin.read().splitlines()
+    idx = 0
+    while idx < len(lines):
+        if not lines[idx].strip():
+            idx += 1
+            continue
+        n = int(lines[idx])
+        idx += 1
+        seq = list(map(int, lines[idx].split()))
+        idx += 1
+        
+        max_prod = 0
+        for i in range(n):
+            prod = 1
+            for j in range(i, n):
+                prod *= seq[j]
+                if prod > 0:
+                    max_prod = max(max_prod, prod)
+        print(f"Case #{case_num}: The maximum product is {max_prod}.\n")
+        case_num += 1
+
+if __name__ == "__main__":
+    main()
