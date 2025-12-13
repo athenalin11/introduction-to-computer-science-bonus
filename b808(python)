@@ -1,0 +1,34 @@
+import sys
+import math
+
+def factor_odd_divisors_count(n):
+    # 计算 n 的奇数因子的个数
+    count = 1
+    # 去除因子 2
+    while n % 2 == 0:
+        n //= 2
+    # 分解奇数部分
+    p = 3
+    while p * p <= n:
+        exp = 0
+        while n % p == 0:
+            n //= p
+            exp += 1
+        if exp > 0:
+            count *= (exp + 1)
+        p += 2
+    if n > 1:
+        count *= 2
+    return count
+
+def main():
+    for line in sys.stdin:
+        c = int(line.strip())
+        if c == 0:
+            break
+        m = 4 * c - 3
+        result = factor_odd_divisors_count(m)
+        print(f"{c} {result}")
+
+if __name__ == "__main__":
+    main()
