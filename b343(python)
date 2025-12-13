@@ -1,0 +1,35 @@
+import sys
+sys.setrecursionlimit(100000)  # 避免深度遞歸錯誤
+
+def dfs(u, adj, visited):
+    visited[u] = True
+    for v in adj[u]:
+        if not visited[v]:
+            dfs(v, adj, visited)
+
+def main():
+    input_data = sys.stdin.read().split()
+    it = iter(input_data)
+    t = int(next(it))  # 測資組數
+
+    for _ in range(t):
+        n = int(next(it))  # 骨牌數量
+        m = int(next(it))  # 邊數
+        l = int(next(it))  # 初始倒下的骨牌數量
+
+        adj = [[] for _ in range(n+1)]  # 1-based
+        for _ in range(m):
+            x = int(next(it))
+            y = int(next(it))
+            adj[x].append(y)
+
+        visited = [False] * (n+1)
+        for _ in range(l):
+            z = int(next(it))
+            if not visited[z]:
+                dfs(z, adj, visited)
+
+        print(sum(visited))
+
+if __name__ == "__main__":
+    main()
