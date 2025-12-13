@@ -1,0 +1,56 @@
+def solve():
+    rfp_num = 1
+    first = True
+    
+    while True:
+        line = input().split()
+        n, p = int(line[0]), int(line[1])
+        
+        if n == 0 and p == 0:
+            break
+        
+        if not first:
+            print()  # 測試資料間空一列
+        first = False
+        
+        # 讀取需求項目
+        requirements = []
+        for _ in range(n):
+            requirements.append(input().strip())
+        
+        # 讀取廠商資料
+        best_vendor = None
+        best_matches = -1
+        best_price = float('inf')
+        
+        for vendor_idx in range(p):
+            vendor_name = input().strip()
+            line = input().split()
+            price = float(line[0])
+            r = int(line[1])
+            
+            # 讀取廠商提供的項目
+            provided = []
+            for _ in range(r):
+                provided.append(input().strip())
+            
+            # 計算符合的需求數量（打勾數）
+            matches = r  # 題目說明 r 就是打勾數
+            
+            # 判斷是否為更好的選擇
+            # 1. 符合需求數量最多
+            # 2. 如果一樣多，選報價最低
+            # 3. 如果報價也一樣，選輸入較前面的（自動滿足）
+            if (matches > best_matches or 
+                (matches == best_matches and price < best_price)):
+                best_vendor = vendor_name
+                best_matches = matches
+                best_price = price
+        
+        print(f"RFP #{rfp_num}")
+        print(best_vendor)
+        
+        rfp_num += 1
+
+if __name__ == "__main__":
+    solve()
