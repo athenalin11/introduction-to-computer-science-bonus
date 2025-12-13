@@ -1,0 +1,20 @@
+def is_multiple_of_17(n_str):
+    # 迭代應用規則直到數字足夠小
+    while len(n_str) > 5 or int(n_str) > 100:
+        d = int(n_str[-1])
+        a = int(n_str[:-1])
+        new_val = a - 5 * d
+        n_str = str(new_val)
+    # 最後直接取模
+    return 1 if int(n_str) % 17 == 0 else 0
+
+def main():
+    import sys
+    for line in sys.stdin:
+        n = line.strip()
+        if n == "0":
+            break
+        print(is_multiple_of_17(n))
+
+if __name__ == "__main__":
+    main()
