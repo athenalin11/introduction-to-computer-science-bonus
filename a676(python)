@@ -1,0 +1,41 @@
+def main():
+    import sys
+    data = sys.stdin.read().strip().split()
+    idx = 0
+    n = int(data[idx]); idx += 1
+    
+    # 讀取標準答案，建立排名 -> 事件編號的映射
+    correct_ranks = list(map(int, data[idx:idx+n])); idx += n
+    correct_order = [0] * (n + 1)
+    for event, rank in enumerate(correct_ranks, 1):
+        correct_order[rank] = event
+    
+    # 標準答案的事件順序序列
+    correct_seq = [correct_order[i] for i in range(1, n+1)]
+    
+    results = []
+    while idx < len(data):
+        student_ranks = list(map(int, data[idx:idx+n])); idx += n
+        
+        # 學生答案的排名 -> 事件編號映射
+        student_order = [0] * (n + 1)
+        for event, rank in enumerate(student_ranks, 1):
+            student_order[rank] = event
+        
+        # 學生答案的事件順序序列
+        student_seq = [student_order[i] for i in range(1, n+1)]
+        
+        # LCS DP
+        dp = [[0] * (n+1) for _ in range(n+1)]
+        for i in range(1, n+1):
+            for j in range(1, n+1):
+                if correct_seq[i-1] == student_seq[j-1]:
+                    dp[i][j] = dp[i-1][j-1] + 1
+                else:
+                    dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+        results.append(dp[n][n])
+    
+    print("\n".join(map(str, results)))
+
+if __name__ == "__main__":
+    main()
