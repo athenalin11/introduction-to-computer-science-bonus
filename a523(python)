@@ -1,0 +1,116 @@
+import sys
+from collections import deque
+
+def solve():
+    input_data = sys.stdin.read().strip().split()
+    if not input_data:
+        return
+    t = int(input_data[0])
+    idx = 1
+    for case_num in range(1, t + 1):
+        N = int(input_data[idx]); idx += 1
+        graph = [[] for _ in range(N + 1)]
+        reverse_graph = [[] for _ in range(N + 1)]
+        for _ in range(N):
+            u = int(input_data[idx]); idx += 1
+            v = int(input_data[idx]); idx += 1
+            graph[u].append(v)
+            reverse_graph[v].append(u)
+        
+        # Kosaraju's algorithm (iterative)
+        visited = [False] * (N + 1)
+        order = []
+        # First DFS on original graph
+        stack = []
+        for i in range(1, N + 1):
+            if not visited[i]:
+                stack.append(i)
+                visited[i] = True
+                while stack:
+                    node = stack[-1]
+                    done = True
+                    for nei in graph[node]:
+                        if not visited[nei]:
+                            visited[nei] = True
+                            stack.append(nei)
+                            done = False
+                            break
+                    if done:
+                        stack.pop()
+                        order.append(node)
+        
+        # Second DFS on reverse graph
+        comp_id = [0] * (N + 1)
+        comp_size = []
+        comp_index = 0
+        visited = [False] * (N + 1)
+        
+        for node in reversed(order):
+            if not visited[node]:
+                stack = [node]
+                visited[node] = True
+                comp_size.append(0)
+                while stack:
+                    u = stack.pop()
+                    comp_id[u] = comp_index
+                    comp_size[comp_index] += 1
+                    for nei in reverse_graph[u]:
+                        if not visited[nei]:
+                            visited[nei] = True
+                            stack.append(nei)
+                comp_index += 1
+        
+        # Build DAG of components
+        comp_graph = [set() for _ in range(comp_index)]
+        indeg = [0] * comp_index
+        for u in range(1, N + 1):
+            for v in graph[u]:
+                if comp_id[u] != comp_id[v]:
+                    if comp_id[v] not in comp_graph[comp_id[u]]:
+                        comp_graph[comp_id[u]].add(comp_id[v])
+        
+        # Build reverse comp graph for toposort DP
+        rev_comp_graph = [[] for _ in range(comp_index)]
+        for u in range(comp_index):
+            for v in comp_graph[u]:
+                rev_comp_graph[v].append(u)
+                indeg[v] += 1  # actually we need indeg for toposort, but here we do reverse toposort
+        
+        # Toposort on comp_graph
+        topo = []
+        indeg = [0] * comp_index
+        for u in range(comp_index):
+            for v in comp_graph[u]:
+                indeg[v] += 1
+        q = deque()
+        for i in range(comp_index):
+            if indeg[i] == 0:
+                q.append(i)
+        while q:
+            u = q.popleft()
+            topo.append(u)
+            for v in comp_graph[u]:
+                indeg[v] -= 1
+                if indeg[v] == 0:
+                    q.append(v)
+        
+        # DP on DAG (reverse topo order)
+        dp = [0] * comp_index
+        for u in reversed(topo):
+            dp[u] = comp_size[u]
+            for v in comp_graph[u]:
+                dp[u] += dp[v]
+        
+        # Find best starting node
+        best_node = -1
+        best_count = -1
+        for i in range(1, N + 1):
+            count = dp[comp_id[i]]
+            if count > best_count or (count == best_count and i < best_node):
+                best_count = count
+                best_node = i
+        
+        print(f"Case {case_num}: {best_node}")
+
+if __name__ == "__main__":
+    solve()
