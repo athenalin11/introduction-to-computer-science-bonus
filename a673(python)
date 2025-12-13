@@ -1,0 +1,43 @@
+def solve():
+    T = int(input())
+    
+    first = True
+    for _ in range(T):
+        # 空白列
+        input()
+        
+        if not first:
+            print()  # 測試資料間空一列
+        first = False
+        
+        N = int(input())
+        
+        jobs = []
+        for i in range(N):
+            line = input().split()
+            days = int(line[0])
+            fine = int(line[1])
+            jobs.append((days, fine, i + 1))  # (天數, 罰金, 工作編號)
+   
+        def compare(job1, job2):
+            days1, fine1, idx1 = job1
+            days2, fine2, idx2 = job2
+            
+            # 比較 days1 * fine2 和 days2 * fine1
+            cost1 = days1 * fine2
+            cost2 = days2 * fine1
+            
+            if cost1 != cost2:
+                return cost1 - cost2  # 升序
+            else:
+                return idx1 - idx2  # 編號小的優先（字典序）
+        
+        from functools import cmp_to_key
+        jobs.sort(key=cmp_to_key(compare))
+        
+        # 輸出工作順序
+        result = [str(job[2]) for job in jobs]
+        print(' '.join(result))
+
+if __name__ == "__main__":
+    solve()
