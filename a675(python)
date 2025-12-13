@@ -1,0 +1,56 @@
+import sys
+
+coins = [5, 10, 20, 50, 100, 200]
+INF = 10**9
+
+
+def make_change_dp(max_amount):
+    dp = [INF] * (max_amount + 1)
+    dp[0] = 0
+    for coin in coins:
+        for value in range(coin, max_amount + 1):
+            if dp[value - coin] != INF:
+                dp[value] = min(dp[value], dp[value - coin] + 1)
+    return dp
+
+
+max_amount = 800 
+change_dp = make_change_dp(max_amount)
+
+for line in sys.stdin:
+    parts = line.split()
+    parts = [p for p in parts if p]
+    if not parts:
+        continue
+    
+    counts = list(map(int, parts[:6]))
+    if sum(counts) == 0:
+        break
+    
+    price = float(parts[-1])
+    total_cents = int(price * 100 + 0.5)
+    
+
+    pay_dp = [INF] * (max_amount + 1)
+    pay_dp[0] = 0
+
+    for i in range(6):
+        coin = coins[i]
+        num = counts[i]
+
+        for k in range(num):
+            for value in range(max_amount, coin - 1, -1):
+                if pay_dp[value - coin] != INF:
+                    pay_dp[value] = min(pay_dp[value], pay_dp[value - coin] + 1)
+
+    ans = INF
+    for pay_amount in range(total_cents, max_amount + 1):
+        if pay_dp[pay_amount] == INF:
+            continue
+        change_amount = pay_amount - total_cents
+        if change_amount < len(change_dp) and change_dp[change_amount] != INF:
+            total_coins = pay_dp[pay_amount] + change_dp[change_amount]
+            if total_coins < ans:
+                ans = total_coins
+    
+    print(f"{ans:3d}")
