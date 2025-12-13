@@ -1,0 +1,34 @@
+def hamming_distance(s1, s2):
+    """計算兩個等長字串的 Hamming 距離（不同字符的數量）"""
+    if len(s1) != len(s2):
+        return float('inf')
+    return sum(c1 != c2 for c1, c2 in zip(s1, s2))
+
+def recognize_number(word):
+    """
+    辨認弟弟寫的數字
+    至多一個字母錯誤，長度正確
+    """
+    numbers = {
+        'one': 1,
+        'two': 2,
+        'three': 3
+    }
+    
+    # 找出 Hamming 距離 <= 1 的匹配
+    for num_word, value in numbers.items():
+        if hamming_distance(word, num_word) <= 1:
+            return value
+    
+    # 不應該到這裡（根據題意一定有合理解釋）
+    return -1
+
+def solve():
+    n = int(input())
+    
+    for _ in range(n):
+        word = input().strip()
+        print(recognize_number(word))
+
+if __name__ == "__main__":
+    solve()
