@@ -1,0 +1,15 @@
+import sys
+
+def main():
+    for line in sys.stdin:
+        n = int(line.strip())
+        if n == 0:
+            break
+        if n <= 100:
+            res = 91
+        else:
+            res = n - 10
+        print(f"f91({n}) = {res}")
+
+if __name__ == "__main__":
+    main()
