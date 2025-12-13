@@ -1,0 +1,52 @@
+import sys
+import math
+
+def calculate_radii(s):
+    """
+    計算正六邊形（邊長s）中放置1-4個圓的半徑
+    
+    r1: 內切圓
+    r2: 2個圓並排
+    r3: 3個圓等邊三角形排列
+    r4: 4個圓（需求解方程：上下各1圓在中軸，中間2圓左右對稱，所有圓相切）
+    """
+    sqrt3 = math.sqrt(3)
+    
+    r1 = s * sqrt3 / 2.0
+    r2 = s * sqrt3 / (2.0 + sqrt3)
+    r3 = s * sqrt3 / 4.0
+    
+    # r4 需要求解方程組：
+    # 上圓心 (0, s*sqrt(3)/2 - r)
+    # 中圓心 (s - 2*r/sqrt(3), 0)
+    # 相切條件: x_mid^2 + y_top^2 = (2r)^2
+    # 使用二分搜索求解
+    left, right = 0.0, s * sqrt3 / 2.0
+    for _ in range(100):
+        r = (left + right) / 2.0
+        y_top = s * sqrt3 / 2.0 - r
+        x_mid = s - 2.0 * r / sqrt3
+        dist_sq = x_mid * x_mid + y_top * y_top
+        target_sq = 4.0 * r * r
+        if dist_sq < target_sq:
+            right = r
+        else:
+            left = r
+    r4 = (left + right) / 2.0
+    
+    return r1, r2, r3, r4
+
+def main():
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            s = float(line)
+            r1, r2, r3, r4 = calculate_radii(s)
+            print(f"{r1:.10f} {r2:.10f} {r3:.10f} {r4:.10f}")
+        except ValueError:
+            continue
+
+if __name__ == '__main__':
+    main()
