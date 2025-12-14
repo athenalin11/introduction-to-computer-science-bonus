@@ -1,0 +1,52 @@
+def is_prime(n):
+    """判斷是否為質數（包含1）"""
+    if n == 1:
+        return True
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def main():
+    import sys
+    
+    for line in sys.stdin:
+        if not line.strip():
+            continue
+            
+        N, C = map(int, line.split())
+        
+        # 找出 1 到 N 的所有質數
+        primes = []
+        for i in range(1, N + 1):
+            if is_prime(i):
+                primes.append(i)
+        
+        k = len(primes)
+        
+        # 計算要輸出的範圍
+        if k % 2 == 0:
+            # 偶數：中間 2C 個
+            center_count = 2 * C
+        else:
+            # 奇數：中間 2C-1 個
+            center_count = 2 * C - 1
+        
+        # 如果要求的數量超過實際數量，輸出全部
+        if center_count >= k:
+            start_idx = 0
+            end_idx = k
+        else:
+            start_idx = (k - center_count) // 2
+            end_idx = start_idx + center_count
+        
+        # 輸出結果
+        print(f"{N} {C}:", end="")
+        for i in range(start_idx, end_idx):
+            print(f" {primes[i]}", end="")
+        print("\n")
+
+if __name__ == "__main__":
+    main()
