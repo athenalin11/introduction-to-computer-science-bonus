@@ -1,0 +1,30 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int main() {
+    int n;
+    while (cin >> n) {
+        // 找出 k
+        int k = 1;
+        while (k * (k + 1) / 2 < n) {
+            k++;
+        }
+        
+        // 在斜線內的位置
+        int prev_sum = k * (k - 1) / 2;
+        int m = n - prev_sum; // 第 m 項
+        
+        int numerator, denominator;
+        if (k % 2 == 1) { // 奇數斜線：從 k/1 開始
+            numerator = k - m + 1;
+            denominator = m;
+        } else { // 偶數斜線：從 1/k 開始
+            numerator = m;
+            denominator = k - m + 1;
+        }
+        
+        cout << "TERM " << n << " IS " << numerator << "/" << denominator << endl;
+    }
+    return 0;
+}
