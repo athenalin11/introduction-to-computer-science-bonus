@@ -1,0 +1,41 @@
+def main():
+    import sys
+    
+    for line in sys.stdin:
+        n = int(line.strip())
+        
+        # 特殊情況
+        if n == 0 or n == 1:
+            print(f"{n:5d} -> 1")
+            continue
+        
+        result = 1
+        count_2 = 0
+        count_5 = 0
+        
+        # 計算 n!
+        for i in range(2, n + 1):
+            num = i
+            
+            # 移除所有的因子 2 和 5，並計數
+            while num % 2 == 0:
+                num //= 2
+                count_2 += 1
+            while num % 5 == 0:
+                num //= 5
+                count_5 += 1
+            
+            # 乘上剩下的數字，取模避免過大
+            result = (result * num) % 100000
+        
+        # 補回多餘的 2（因為 2 的數量通常比 5 多）
+        for _ in range(count_2 - count_5):
+            result = (result * 2) % 100000
+        
+        # 取最後一位
+        last_non_zero = result % 10
+        
+        print(f"{n:5d} -> {last_non_zero}")
+
+if __name__ == "__main__":
+    main()
