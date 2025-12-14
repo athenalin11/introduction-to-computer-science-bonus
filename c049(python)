@@ -1,0 +1,39 @@
+import math
+import sys
+
+for line in sys.stdin:
+    line = line.strip()
+    if not line:
+        continue
+    n = int(line)
+    r = n - 0.5
+
+    partial = 0
+    full = 0
+
+    # 只算第一象限
+    for x in range(n):
+        y = 0
+        while y < n:
+            # 方格四個角
+            x1, y1 = x, y
+            x2, y2 = x + 1, y + 1
+
+            # 判斷四角是否在圓內
+            inside = sum(
+                (a * a + b * b <= r * r)
+                for a, b in [(x1, y1), (x1, y2), (x2, y1), (x2, y2)]
+            )
+
+            if inside == 4:
+                full += 1
+            elif inside > 0:
+                partial += 1
+            y += 1
+
+    # 四個象限
+    partial *= 4
+    full *= 4
+
+    print(f"In the case n = {n}, {partial} cells contain segments of the circle.")
+    print(f"There are {full} cells completely contained in the circle.\n")
