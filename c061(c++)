@@ -1,0 +1,20 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int main() {
+    int n, m;
+    while (cin >> n >> m) {
+        if (n == 0 && m == 0) break;
+        
+        long long ans = 1;
+        int k = min(m, n - m);
+        
+        for (int i = 1; i <= k; i++) {
+            ans = ans * (n - k + i) / i;
+        }
+        
+        cout << ans << endl;
+    }
+    return 0;
+}
