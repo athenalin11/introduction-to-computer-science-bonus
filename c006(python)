@@ -1,0 +1,23 @@
+import sys
+
+def main():
+    for line in sys.stdin:
+        nums = list(map(int, line.strip().split()))
+        if nums == [0, 0, 0, 0]:
+            break
+        start, first, second, third = nums
+        total = 0
+        # 1. 順時針兩圈
+        total += 360 * 2
+        # 2. 順時針到第一號碼
+        total += ((start - first) % 40) * 9
+        # 3. 逆時針一圈
+        total += 360
+        # 4. 逆時針到第二號碼
+        total += ((second - first) % 40) * 9
+        # 5. 順時針到第三號碼
+        total += ((second - third) % 40) * 9
+        print(total)
+
+if __name__ == "__main__":
+    main()
