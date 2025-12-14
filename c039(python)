@@ -1,0 +1,42 @@
+def main():
+    import sys
+    
+    # 建立快取
+    cache = {}
+    
+    def cycle_length(n):
+        if n in cache:
+            return cache[n]
+        
+        original_n = n
+        count = 1
+        while n != 1:
+            if n % 2 == 1:
+                n = 3 * n + 1
+            else:
+                n = n // 2
+            count += 1
+            
+            # 檢查是否已在快取中
+            if n in cache:
+                count += cache[n] - 1
+                break
+        
+        cache[original_n] = count
+        return count
+    
+    for line in sys.stdin:
+        if not line.strip():
+            continue
+            
+        i, j = map(int, line.split())
+        start, end = min(i, j), max(i, j)
+        
+        max_length = 0
+        for n in range(start, end + 1):
+            max_length = max(max_length, cycle_length(n))
+        
+        print(f"{i} {j} {max_length}")
+
+if __name__ == "__main__":
+    main()
