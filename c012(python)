@@ -1,0 +1,33 @@
+import sys
+
+def main():
+    lines = sys.stdin.read().splitlines()
+    
+    for i, line in enumerate(lines):
+        if not line:
+            continue
+            
+        # 統計頻率
+        freq = {}
+        for char in line:
+            ascii_val = ord(char)
+            freq[ascii_val] = freq.get(ascii_val, 0) + 1
+        
+        # 轉為列表並排序
+        result = []
+        for ascii_val, count in freq.items():
+            result.append((ascii_val, count))
+        
+        # 排序：先按次數升序，次數相同按ASCII值降序
+        result.sort(key=lambda x: (x[1], -x[0]))
+        
+        # 輸出
+        for ascii_val, count in result:
+            print(ascii_val, count)
+        
+        # 測試資料間空一行（最後一筆後不空）
+        if i < len(lines) - 1:
+            print()
+
+if __name__ == "__main__":
+    main()
