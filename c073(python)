@@ -1,0 +1,77 @@
+def solve():
+    import sys
+    data = sys.stdin.read().strip().split('\n')
+    idx = 0
+    output_lines = []
+    
+    while idx < len(data):
+        n = int(data[idx])
+        idx += 1
+        
+        # 初始化
+        piles = [[i] for i in range(n)]
+        block_pos = {i: (i, 0) for i in range(n)}  # (pile_index, height)
+        
+        def return_above(b):
+            # 把 b 上面的木块全部归位
+            pile_idx, height = block_pos[b]
+            pile = piles[pile_idx]
+            while pile[-1] != b:
+                blk = pile.pop()
+                piles[blk].append(blk)
+                block_pos[blk] = (blk, len(piles[blk]) - 1)
+        
+        def move_pile(a, b_pos):
+            # 把 a 及其上面的整堆移到 b_pos 所在堆的顶部
+            a_pile_idx, a_height = block_pos[a]
+            a_pile = piles[a_pile_idx]
+            moving_blocks = a_pile[a_height:]
+            # 从原堆移除
+            piles[a_pile_idx] = a_pile[:a_height]
+            # 添加到目标堆
+            for blk in moving_blocks:
+                piles[b_pos].append(blk)
+                block_pos[blk] = (b_pos, len(piles[b_pos]) - 1)
+        
+        while idx < len(data):
+            line = data[idx].strip()
+            idx += 1
+            if line == "quit":
+                break
+            parts = line.split()
+            cmd1, a, cmd2, b = parts[0], int(parts[1]), parts[2], int(parts[3])
+            
+            # 检查合法性
+            if a == b:
+                continue
+            a_pile_idx, _ = block_pos[a]
+            b_pile_idx, _ = block_pos[b]
+            if a_pile_idx == b_pile_idx:
+                continue
+            
+            if cmd1 == "move":
+                if cmd2 == "onto":
+                    return_above(a)
+                    return_above(b)
+                elif cmd2 == "over":
+                    return_above(a)
+                # 移动 a 到 b 所在堆顶部
+                a_pile_idx, a_height = block_pos[a]
+                piles[a_pile_idx].pop()
+                piles[b_pile_idx].append(a)
+                block_pos[a] = (b_pile_idx, len(piles[b_pile_idx]) - 1)
+            
+            elif cmd1 == "pile":
+                if cmd2 == "onto":
+                    return_above(b)
+                # pile over 或 pile onto 都要移动整堆
+                move_pile(a, b_pile_idx)
+        
+        # 输出结果
+        for i in range(n):
+            output_lines.append(f"{i}: " + " ".join(map(str, piles[i])))
+    
+    print("\n".join(output_lines))
+
+if __name__ == "__main__":
+    solve()
