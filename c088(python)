@@ -1,0 +1,44 @@
+import sys
+import math
+
+def parse_line(line):
+    parts = list(map(int, line.split()))
+    # parts = [p_k, e_k, ..., p_0, e_0]
+    X = 1
+    for i in range(0, len(parts), 2):
+        p, e = parts[i], parts[i+1]
+        X *= pow(p, e)
+    return X
+
+def factorize(n):
+    factors = {}
+    # trial division
+    d = 2
+    while d * d <= n:
+        while n % d == 0:
+            factors[d] = factors.get(d, 0) + 1
+            n //= d
+        d = 3 if d == 2 else d + 2  # 2, then odd numbers
+    if n > 1:
+        factors[n] = factors.get(n, 0) + 1
+    # return pairs sorted by prime descending
+    return sorted(factors.items(), key=lambda x: -x[0])
+
+def main():
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        if line == "0":
+            break
+        X = parse_line(line)
+        Y = X - 1
+        pairs = factorize(Y)
+        out = []
+        for p, e in pairs:
+            out.append(str(p))
+            out.append(str(e))
+        print(" ".join(out))
+
+if __name__ == "__main__":
+    main()
