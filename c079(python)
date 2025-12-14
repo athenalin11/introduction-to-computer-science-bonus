@@ -1,0 +1,14 @@
+import sys
+
+for line in sys.stdin:
+    if not line.strip():
+        continue
+    n, k = map(int, line.split())
+    smoked = 0
+    butts = 0
+    while n > 0:
+        smoked += n
+        butts += n
+        n = butts // k
+        butts %= k
+    print(smoked)
