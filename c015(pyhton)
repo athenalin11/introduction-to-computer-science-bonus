@@ -1,0 +1,28 @@
+def is_palindrome(n):
+    """檢查是否為迴文"""
+    s = str(n)
+    return s == s[::-1]
+
+def reverse_num(n):
+    """反轉數字"""
+    return int(str(n)[::-1])
+
+def main():
+    n = int(input())
+    for _ in range(n):
+        num = int(input())
+        steps = 0
+        
+        while True:
+            # 先做反轉相加
+            rev = reverse_num(num)
+            num += rev
+            steps += 1
+            
+            # 檢查是否成為迴文
+            if is_palindrome(num):
+                print(steps, num)
+                break
+
+if __name__ == "__main__":
+    main()
