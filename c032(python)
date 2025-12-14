@@ -1,0 +1,35 @@
+def main():
+    numbers = []
+    while True:
+        line = input().split()
+        for num in line:
+            n = int(num)
+            if n == 0:
+                break
+            numbers.append(n)
+        if '0' in line:
+            break
+    
+    print("PERFECTION OUTPUT")
+    for n in numbers:
+        # 計算真因數和
+        total = 0
+        for i in range(1, n):
+            if n % i == 0:
+                total += i
+        
+        # 判斷類型
+        if total == n:
+            classification = "PERFECT"
+        elif total < n:
+            classification = "DEFICIENT"
+        else:
+            classification = "ABUNDANT"
+        
+        # 輸出（數字佔5格靠右對齊）
+        print(f"{n:5d}  {classification}")
+    
+    print("END OF OUTPUT")
+
+if __name__ == "__main__":
+    main()
