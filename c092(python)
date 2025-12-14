@@ -1,0 +1,58 @@
+import sys
+
+def main():
+    data = sys.stdin.read().strip().split('\n')
+    if not data:
+        return
+    
+    # 讀取地圖邊界
+    max_x, max_y = map(int, data[0].split())
+    
+    # 方向對應
+    dirs = {'N': 0, 'E': 1, 'S': 2, 'W': 3}
+    dir_char = ['N', 'E', 'S', 'W']
+    moves = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+    
+    scent = set()
+    idx = 1
+    while idx < len(data):
+        # 讀取機器人初始狀態
+        x, y, d = data[idx].split()
+        idx += 1
+        x, y = int(x), int(y)
+        dir_idx = dirs[d]
+        
+        # 讀取指令
+        instructions = data[idx].strip()
+        idx += 1
+        
+        lost = False
+        for cmd in instructions:
+            if cmd == 'L':
+                dir_idx = (dir_idx + 3) % 4
+            elif cmd == 'R':
+                dir_idx = (dir_idx + 1) % 4
+            elif cmd == 'F':
+                dx, dy = moves[dir_idx]
+                nx, ny = x + dx, y + dy
+                if nx < 0 or nx > max_x or ny < 0 or ny > max_y:
+                    # 會掉落
+                    if (x, y) in scent:
+                        # 有 scent，忽略指令
+                        continue
+                    else:
+                        # 記錄 scent 並標記 lost
+                        scent.add((x, y))
+                        lost = True
+                        break
+                else:
+                    x, y = nx, ny
+        
+        # 輸出結果
+        if lost:
+            print(f"{x} {y} {dir_char[dir_idx]} LOST")
+        else:
+            print(f"{x} {y} {dir_char[dir_idx]}")
+
+if __name__ == "__main__":
+    main()
