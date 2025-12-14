@@ -1,0 +1,17 @@
+import sys
+
+def main():
+    data = sys.stdin.read().splitlines()
+    idx = 0
+    n = int(data[idx]); idx += 1  # 測資組數
+
+    for _ in range(n):
+        f = int(data[idx]); idx += 1  # 農夫數量
+        total = 0
+        for _ in range(f):
+            area, animals, eco = map(int, data[idx].split()); idx += 1
+            total += area * eco  # 每個農夫的獎金
+        print(total)
+
+if __name__ == "__main__":
+    main()
