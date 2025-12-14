@@ -1,0 +1,25 @@
+def main():
+    n = int(input())
+    
+    # 統計頻率
+    freq = {}
+    for _ in range(n):
+        line = input().upper()
+        for char in line:
+            if 'A' <= char <= 'Z':
+                freq[char] = freq.get(char, 0) + 1
+    
+    # 轉為列表並排序
+    result = []
+    for char, count in freq.items():
+        result.append((char, count))
+    
+    # 排序：先按次數降序，次數相同按字母升序
+    result.sort(key=lambda x: (-x[1], x[0]))
+    
+    # 輸出
+    for char, count in result:
+        print(f"{char} {count}")
+
+if __name__ == "__main__":
+    main()
