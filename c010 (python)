@@ -1,0 +1,32 @@
+import sys
+import heapq
+
+def main():
+    left = []   # 最大堆（用負數模擬）
+    right = []  # 最小堆
+    
+    for line in sys.stdin:
+        x = int(line.strip())
+        
+        # 插入數字
+        if not left or x <= -left[0]:
+            heapq.heappush(left, -x)
+        else:
+            heapq.heappush(right, x)
+        
+        # 平衡堆
+        if len(left) > len(right) + 1:
+            heapq.heappush(right, -heapq.heappop(left))
+        elif len(right) > len(left):
+            heapq.heappush(left, -heapq.heappop(right))
+        
+        # 計算中位數
+        if len(left) == len(right):
+            median = (-left[0] + right[0]) // 2
+        else:
+            median = -left[0]
+        
+        print(median)
+
+if __name__ == "__main__":
+    main()
