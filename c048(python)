@@ -1,0 +1,31 @@
+import math
+
+def main():
+    import sys
+    for line in sys.stdin:
+        N = int(line.strip())
+        if N == 0:
+            break
+        
+        k = math.isqrt(N - 1) + 1
+        m = k * k - N
+        
+        if k % 2 == 1:
+            if m < k:
+                x = m + 1
+                y = k
+            else:
+                x = k
+                y = 2 * k - m - 1
+        else:
+            if m < k:
+                x = k
+                y = m + 1
+            else:
+                x = 2 * k - m - 1
+                y = k
+        
+        print(x, y)
+
+if __name__ == "__main__":
+    main()
