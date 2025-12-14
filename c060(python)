@@ -1,0 +1,54 @@
+def main():
+    import sys
+    
+    for line in sys.stdin:
+        coefficients = list(map(int, line.split()))
+        terms = []
+        
+        # 從 x^8 到 x^0
+        for exp in range(8, -1, -1):
+            coef = coefficients[8 - exp]
+            
+            # 係數為 0 跳過
+            if coef == 0:
+                continue
+            
+            # 處理符號和係數
+            sign = ""
+            if terms:  # 不是第一項
+                if coef > 0:
+                    sign = " + "
+                else:
+                    sign = " - "
+                    coef = -coef  # 轉為正數
+            else:  # 第一項
+                if coef < 0:
+                    sign = "-"
+                    coef = -coef  # 轉為正數
+            
+            # 處理係數顯示
+            if exp == 0:
+                # 常數項
+                term = f"{sign}{coef}"
+            else:
+                if coef == 1:
+                    # 係數 1 不顯示
+                    term = f"{sign}x"
+                else:
+                    term = f"{sign}{coef}x"
+                
+                if exp > 1:
+                    term += f"^{exp}"
+            
+            terms.append(term)
+        
+        # 如果所有係數都是 0，輸出 0
+        if not terms:
+            print("0")
+        else:
+            # 合併所有項次
+            result = "".join(terms)
+            print(result)
+
+if __name__ == "__main__":
+    main()
