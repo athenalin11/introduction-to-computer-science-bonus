@@ -1,0 +1,41 @@
+def main():
+    import sys
+    
+    for line in sys.stdin:
+        data = line.split()
+        if not data:
+            continue
+            
+        H, U, D, F = map(int, data)
+        if H == 0:
+            break
+        
+        current_height = 0
+        day = 0
+        climb = U
+        fatigue_loss = U * (F / 100)
+        
+        while True:
+            day += 1
+            
+            # 白天爬升
+            current_height += climb
+            
+            # 檢查是否成功
+            if current_height > H:
+                print(f"success on day {day}")
+                break
+            
+            # 晚上下滑
+            current_height -= D
+            
+            # 檢查是否失敗
+            if current_height < 0:
+                print(f"failure on day {day}")
+                break
+            
+            # 更新爬升能力（考慮疲勞）
+            climb = max(0, climb - fatigue_loss)
+
+if __name__ == "__main__":
+    main()
