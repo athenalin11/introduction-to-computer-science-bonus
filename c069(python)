@@ -1,0 +1,90 @@
+import sys
+
+MONTH_NAMES = [None, "January", "February", "March", "April", "May", "June",
+               "July", "August", "September", "October", "November", "December"]
+
+WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+
+def is_julian_leap(year):
+    return year % 4 == 0
+
+def is_gregorian_leap(year):
+    return (year % 4 == 0) and (year % 100 != 0 or year % 400 == 0)
+
+def days_in_month(month, year, gregorian):
+    if month == 2:
+        return 29 if (is_gregorian_leap(year) if gregorian else is_julian_leap(year)) else 28
+    if month in (4, 6, 9, 11):
+        return 30
+    return 31
+
+def to_jdn(year, month, day, gregorian):
+    # Algorithm to convert a civil date to JDN; handles Julian vs Gregorian
+    a = (14 - month) // 12
+    y = year + 4800 - a
+    m = month + 12 * a - 3
+    if gregorian:
+        jdn = day + ((153 * m + 2) // 5) + 365 * y + y // 4 - y // 100 + y // 400 - 32045
+    else:
+        jdn = day + ((153 * m + 2) // 5) + 365 * y + y // 4 - 32083
+    return jdn
+
+def weekday_from_jdn(jdn):
+    # (jdn + 1) % 7 => Sunday=0
+    return (jdn + 1) % 7
+
+def validate_and_classify(month, day, year):
+    # Returns (valid:bool, gregorian:bool)
+    if not (1 <= month <= 12) or year <= 0 or day <= 0:
+        return False, True
+
+    # British/American switch: 1752-09-02 -> 1752-09-14 (skipped 3..13)
+    if year == 1752 and month == 9 and 3 <= day <= 13:
+        return False, True
+
+    # Dates on/after 1752-09-14 are Gregorian in British/American territories
+    if (year > 1752) or (year == 1752 and (month > 9 or (month == 9 and day >= 14))):
+        gregorian = True
+    else:
+        gregorian = False
+
+    dim = days_in_month(month, year, gregorian)
+    if day > dim:
+        return False, gregorian
+
+    return True, gregorian
+
+def format_input_date(month, day, year):
+    return f"{month}/{day}/{year}"
+
+def format_output_date(month, day, year):
+    return f"{MONTH_NAMES[month]} {day}, {year}"
+
+def process_line(month, day, year):
+    valid, greg = validate_and_classify(month, day, year)
+    if not valid:
+        return f"{format_input_date(month, day, year)} is an invalid date."
+
+    jdn = to_jdn(year, month, day, greg)
+    wd = weekday_from_jdn(jdn)
+    name = WEEKDAY_NAMES[wd]
+    return f"{format_output_date(month, day, year)} is a {name}"
+
+def main():
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split()
+        if len(parts) != 3:
+            continue
+        try:
+            m, d, y = map(int, parts)
+        except ValueError:
+            continue
+        if m == 0 and d == 0 and y == 0:
+            break
+        print(process_line(m, d, y))
+
+if __name__ == '__main__':
+    main()
