@@ -1,0 +1,47 @@
+import sys
+
+def main():
+    data = sys.stdin.read().splitlines()
+    idx = 0
+    n = int(data[idx].strip())
+    idx += 1
+    
+    for case in range(n):
+        # 跳過可能的空白行
+        while idx < len(data) and data[idx].strip() == "":
+            idx += 1
+        
+        if idx >= len(data):
+            break
+            
+        A = int(data[idx].strip())
+        idx += 1
+        
+        while idx < len(data) and data[idx].strip() == "":
+            idx += 1
+            
+        if idx >= len(data):
+            break
+            
+        F = int(data[idx].strip())
+        idx += 1
+        
+        for f in range(F):
+            # 上升部分
+            for i in range(1, A + 1):
+                print(str(i) * i)
+            
+            # 下降部分
+            for i in range(A - 1, 0, -1):
+                print(str(i) * i)
+            
+            # 波之間空一行（最後一個波後面不空）
+            if f < F - 1:
+                print()
+        
+        # 測試資料之間空一行（最後一組後面不空）
+        if case < n - 1:
+            print()
+
+if __name__ == "__main__":
+    main()
