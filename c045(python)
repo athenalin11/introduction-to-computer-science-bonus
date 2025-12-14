@@ -1,0 +1,29 @@
+def main():
+    lines = []
+    
+    # 讀取所有輸入
+    while True:
+        try:
+            line = input()
+            lines.append(line)
+        except EOFError:
+            break
+    
+    if not lines:
+        return
+    
+    # 找到最長行的長度
+    max_len = max(len(line) for line in lines)
+    
+    # 旋轉輸出
+    for col in range(max_len):
+        output_line = []
+        for row in range(len(lines) - 1, -1, -1):
+            if col < len(lines[row]):
+                output_line.append(lines[row][col])
+            else:
+                output_line.append(' ')
+        print(''.join(output_line))
+
+if __name__ == "__main__":
+    main()
