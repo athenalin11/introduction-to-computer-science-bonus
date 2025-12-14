@@ -1,0 +1,29 @@
+def main():
+    T = int(input())
+    for case in range(1, T + 1):
+        a = int(input())
+        b = int(input())
+        
+        # 找到第一個奇數
+        if a % 2 == 0:
+            first = a + 1
+        else:
+            first = a
+        
+        # 找到最後一個奇數
+        if b % 2 == 0:
+            last = b - 1
+        else:
+            last = b
+        
+        # 計算總和
+        if first > last:
+            total = 0
+        else:
+            n = ((last - first) // 2) + 1
+            total = n * (first + last) // 2
+        
+        print(f"Case {case}: {total}")
+
+if __name__ == "__main__":
+    main()
