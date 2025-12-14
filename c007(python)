@@ -1,0 +1,21 @@
+import sys
+
+def main():
+    content = sys.stdin.read()
+    result = []
+    count = 0
+    
+    for char in content:
+        if char == '"':
+            if count % 2 == 0:
+                result.append("``")
+            else:
+                result.append("''")
+            count += 1
+        else:
+            result.append(char)
+    
+    print(''.join(result), end='')
+
+if __name__ == "__main__":
+    main()
