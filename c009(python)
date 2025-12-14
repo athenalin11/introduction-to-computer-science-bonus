@@ -1,0 +1,28 @@
+while True:
+    try:
+        # 读取输入
+        num_str = input().strip()
+        
+        # 检查是否结束输入（负的十进制数）
+        if num_str.startswith('-'):
+            break
+            
+        # 判断是16进制还是10进制
+        if num_str.startswith('0x'):
+            # 16进制转10进制
+            decimal_value = int(num_str, 16)
+            print(decimal_value)
+        else:
+            # 10进制转16进制
+            decimal_value = int(num_str)
+            hex_value = hex(decimal_value)
+            # 只将字母部分转换为大写，保持"0x"小写
+            hex_parts = hex_value.split('x')
+            if len(hex_parts) == 2:
+                result = '0x' + hex_parts[1].upper()
+                print(result)
+            else:
+                print(hex_value)
+            
+    except EOFError:
+        break
